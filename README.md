@@ -1,264 +1,340 @@
-# MinIO Quickstart Guide
-
-[![Slack](https://slack.min.io/slack?type=svg)](https://slack.min.io) [![Docker Pulls](https://img.shields.io/docker/pulls/minio/minio.svg?maxAge=604800)](https://hub.docker.com/r/minio/minio/) [![license](https://img.shields.io/badge/license-AGPL%20V3-blue)](https://github.com/minio/minio/blob/master/LICENSE)
-
-[![MinIO](https://raw.githubusercontent.com/minio/minio/master/.github/logo.svg?sanitize=true)](https://min.io)
-
-MinIO is a High Performance Object Storage released under GNU Affero General Public License v3.0. It is API compatible with Amazon S3 cloud storage service. Use MinIO to build high performance infrastructure for machine learning, analytics and application data workloads.
-
-This README provides quickstart instructions on running MinIO on bare metal hardware, including container-based installations. For Kubernetes environments, use the [MinIO Kubernetes Operator](https://github.com/minio/operator/blob/master/README.md).
-
-## Container Installation
-
-Use the following commands to run a standalone MinIO server as a container.
-
-Standalone MinIO servers are best suited for early development and evaluation. Certain features such as versioning, object locking, and bucket replication
-require distributed deploying MinIO with Erasure Coding. For extended development and production, deploy MinIO with Erasure Coding enabled - specifically,
-with a *minimum* of 4 drives per MinIO server. See [MinIO Erasure Code Overview](https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html)
-for more complete documentation.
-
-### Stable
-
-Run the following command to run the latest stable image of MinIO as a container using an ephemeral data volume:
-
-```sh
-podman run -p 9000:9000 -p 9001:9001 \
-  quay.io/minio/minio server /data --console-address ":9001"
-```
-
-The MinIO deployment starts using default root credentials `minioadmin:minioadmin`. You can test the deployment using the MinIO Console, an embedded
-object browser built into MinIO Server. Point a web browser running on the host machine to <http://127.0.0.1:9000> and log in with the
-root credentials. You can use the Browser to create buckets, upload objects, and browse the contents of the MinIO server.
-
-You can also connect using any S3-compatible tool, such as the MinIO Client `mc` commandline tool. See
-[Test using MinIO Client `mc`](#test-using-minio-client-mc) for more information on using the `mc` commandline tool. For application developers,
-see <https://min.io/docs/minio/linux/developers/minio-drivers.html> to view MinIO SDKs for supported languages.
-
-> NOTE: To deploy MinIO on with persistent storage, you must map local persistent directories from the host OS to the container using the `podman -v` option. For example, `-v /mnt/data:/data` maps the host OS drive at `/mnt/data` to `/data` on the container.
-
-## macOS
-
-Use the following commands to run a standalone MinIO server on macOS.
-
-Standalone MinIO servers are best suited for early development and evaluation. Certain features such as versioning, object locking, and bucket replication require distributed deploying MinIO with Erasure Coding. For extended development and production, deploy MinIO with Erasure Coding enabled - specifically, with a *minimum* of 4 drives per MinIO server. See [MinIO Erasure Code Overview](https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html) for more complete documentation.
-
-### Homebrew (recommended)
-
-Run the following command to install the latest stable MinIO package using [Homebrew](https://brew.sh/). Replace ``/data`` with the path to the drive or directory in which you want MinIO to store data.
-
-```sh
-brew install minio/stable/minio
-minio server /data
-```
-
-> NOTE: If you previously installed minio using `brew install minio` then it is recommended that you reinstall minio from `minio/stable/minio` official repo instead.
-
-```sh
-brew uninstall minio
-brew install minio/stable/minio
-```
-
-The MinIO deployment starts using default root credentials `minioadmin:minioadmin`. You can test the deployment using the MinIO Console, an embedded web-based object browser built into MinIO Server. Point a web browser running on the host machine to <http://127.0.0.1:9000> and log in with the root credentials. You can use the Browser to create buckets, upload objects, and browse the contents of the MinIO server.
-
-You can also connect using any S3-compatible tool, such as the MinIO Client `mc` commandline tool. See [Test using MinIO Client `mc`](#test-using-minio-client-mc) for more information on using the `mc` commandline tool. For application developers, see <https://min.io/docs/minio/linux/developers/minio-drivers.html/> to view MinIO SDKs for supported languages.
-
-### Binary Download
-
-Use the following command to download and run a standalone MinIO server on macOS. Replace ``/data`` with the path to the drive or directory in which you want MinIO to store data.
-
-```sh
-wget https://dl.min.io/server/minio/release/darwin-amd64/minio
+<div class="Box-sc-g0xbh4-0 bJMeLZ js-snippet-clipboard-copy-unpositioned" data-hpc="true"><article class="markdown-body entry-content container-lg" itemprop="text"><h1 tabindex="-1" dir="auto"><a id="user-content-minio-quickstart-guide" class="anchor" aria-hidden="true" tabindex="-1" href="#minio-quickstart-guide"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 快速入门指南</font></font></h1>
+<p dir="auto"><a href="https://slack.min.io" rel="nofollow"><img src="https://camo.githubusercontent.com/073979b05f3fb734ddb5382a4397c6e17c36946d8941c0816b6141efa0ce7051/68747470733a2f2f736c61636b2e6d696e2e696f2f736c61636b3f747970653d737667" alt="松弛" data-canonical-src="https://slack.min.io/slack?type=svg" style="max-width: 100%;"></a> <a href="https://hub.docker.com/r/minio/minio/" rel="nofollow"><img src="https://camo.githubusercontent.com/d1b542148045f449d475aedcc841b126c405076f9b58ef82122edc5d9527c8d5/68747470733a2f2f696d672e736869656c64732e696f2f646f636b65722f70756c6c732f6d696e696f2f6d696e696f2e7376673f6d61784167653d363034383030" alt="Docker 拉取" data-canonical-src="https://img.shields.io/docker/pulls/minio/minio.svg?maxAge=604800" style="max-width: 100%;"></a> <a href="https://github.com/minio/minio/blob/master/LICENSE"><img src="https://camo.githubusercontent.com/a65c52525a5e0794c044d801ae3865968a58fdda515786eb5c1465139afe3013/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6c6963656e73652d4147504c25323056332d626c7565" alt="执照" data-canonical-src="https://img.shields.io/badge/license-AGPL%20V3-blue" style="max-width: 100%;"></a></p>
+<p dir="auto"><a href="https://min.io" rel="nofollow"><img src="https://raw.githubusercontent.com/minio/minio/master/.github/logo.svg?sanitize=true" alt="最小IO" style="max-width: 100%;"></a></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 是根据 GNU Affero 通用公共许可证 v3.0 发布的高性能对象存储。</font><font style="vertical-align: inherit;">它与 Amazon S3 云存储服务 API 兼容。</font><font style="vertical-align: inherit;">使用 MinIO 为机器学习、分析和应用程序数据工作负载构建高性能基础架构。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">本自述文件提供了有关在裸机硬件上运行 MinIO 的快速入门说明，包括基于容器的安装。</font><font style="vertical-align: inherit;">对于 Kubernetes 环境，请使用</font></font><a href="https://github.com/minio/operator/blob/master/README.md"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO Kubernetes Operator</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+<h2 tabindex="-1" dir="auto"><a id="user-content-container-installation" class="anchor" aria-hidden="true" tabindex="-1" href="#container-installation"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">集装箱安装</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用以下命令将独立的 MinIO 服务器作为容器运行。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">独立的 MinIO 服务器最适合早期开发和评估。</font><font style="vertical-align: inherit;">某些功能（例如版本控制、对象锁定和存储桶复制）需要使用纠删码进行分布式部署 MinIO。</font><font style="vertical-align: inherit;">对于扩展开发和生产，部署启用纠删码的 MinIO - 具体来说，每个 MinIO 服务器</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">至少</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有 4 个驱动器。</font><font style="vertical-align: inherit;">有关更完整的文档，请参阅</font></font><a href="https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 纠删码概述</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+。</font></font></p>
+<h3 tabindex="-1" dir="auto"><a id="user-content-stable" class="anchor" aria-hidden="true" tabindex="-1" href="#stable"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">稳定的</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行以下命令以使用临时数据卷将 MinIO 的最新稳定映像作为容器运行：</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>podman run -p 9000:9000 -p 9001:9001 \
+  quay.io/minio/minio server /data --console-address <span class="pl-s"><span class="pl-pds">"</span>:9001<span class="pl-pds">"</span></span></pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="podman run -p 9000:9000 -p 9001:9001 \
+  quay.io/minio/minio server /data --console-address &quot;:9001&quot;" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 部署使用默认 root 凭据启动</font></font><code>minioadmin:minioadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">您可以使用 MinIO Console（MinIO Server 中内置的嵌入式对象浏览器）来测试部署。</font><font style="vertical-align: inherit;">将主机上运行的 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用 root 凭据登录。</font><font style="vertical-align: inherit;">您可以使用浏览器创建存储桶、上传对象以及浏览 MinIO 服务器的内容。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以使用任何 S3 兼容工具进行连接，例如 MinIO Client</font></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令行工具。</font><font style="vertical-align: inherit;">有关使用命令行工具的更多信息，</font><font style="vertical-align: inherit;">请参阅
+</font></font><a href="#test-using-minio-client-mc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></a><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">对于应用程序开发人员，请参阅</font></font><a href="https://min.io/docs/minio/linux/developers/minio-drivers.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://min.io/docs/minio/linux/developers/minio-drivers.html</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看支持语言的 MinIO SDK。</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：要使用持久存储部署 MinIO，必须使用该</font></font><code>podman -v</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选项将本地持久目录从主机操作系统映射到容器。</font><font style="vertical-align: inherit;">例如，</font></font><code>-v /mnt/data:/data</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将主机操作系统驱动器映射</font></font><code>/mnt/data</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">到</font></font><code>/data</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">容器上。</font></font></p>
+</blockquote>
+<h2 tabindex="-1" dir="auto"><a id="user-content-macos" class="anchor" aria-hidden="true" tabindex="-1" href="#macos"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">苹果系统</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用以下命令在 macOS 上运行独立的 MinIO 服务器。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">独立的 MinIO 服务器最适合早期开发和评估。</font><font style="vertical-align: inherit;">某些功能（例如版本控制、对象锁定和存储桶复制）需要使用纠删码进行分布式部署 MinIO。</font><font style="vertical-align: inherit;">对于扩展开发和生产，部署启用纠删码的 MinIO - 具体来说，每个 MinIO 服务器</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">至少</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有 4 个驱动器。</font><font style="vertical-align: inherit;">有关更完整的文档，请参阅</font></font><a href="https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 纠删码概述</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+<h3 tabindex="-1" dir="auto"><a id="user-content-homebrew-recommended" class="anchor" aria-hidden="true" tabindex="-1" href="#homebrew-recommended"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">自制（推荐）</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">运行以下命令以使用</font></font><a href="https://brew.sh/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Homebrew</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">安装最新的稳定 MinIO 软件包。</font><font style="vertical-align: inherit;">替换</font></font><code>/data</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为您希望 MinIO 存储数据的驱动器或目录的路径。</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>brew install minio/stable/minio
+minio server /data</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="brew install minio/stable/minio
+minio server /data" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：如果您之前使用过安装过 minio，</font></font><code>brew install minio</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">那么建议您从</font></font><code>minio/stable/minio</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">官方仓库重新安装 minio。</font></font></p>
+</blockquote>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>brew uninstall minio
+brew install minio/stable/minio</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="brew uninstall minio
+brew install minio/stable/minio" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 部署使用默认 root 凭据启动</font></font><code>minioadmin:minioadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">您可以使用 MinIO Console 来测试部署，MinIO Console 是 MinIO Server 中内置的基于 Web 的嵌入式对象浏览器。</font><font style="vertical-align: inherit;">将主机上运行的 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用 root 凭据登录。</font><font style="vertical-align: inherit;">您可以使用浏览器创建存储桶、上传对象以及浏览 MinIO 服务器的内容。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以使用任何 S3 兼容工具进行连接，例如 MinIO Client</font></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令行工具。</font><font style="vertical-align: inherit;">有关使用命令行工具的更多信息，</font><font style="vertical-align: inherit;">请参阅</font></font><a href="#test-using-minio-client-mc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></a><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">对于应用程序开发人员，请参阅</font></font><a href="https://min.io/docs/minio/linux/developers/minio-drivers.html/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://min.io/docs/minio/linux/developers/minio-drivers.html/</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看支持语言的 MinIO SDK。</font></font></p>
+<h3 tabindex="-1" dir="auto"><a id="user-content-binary-download" class="anchor" aria-hidden="true" tabindex="-1" href="#binary-download"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">二进制下载</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用以下命令在 macOS 上下载并运行独立的 MinIO 服务器。</font><font style="vertical-align: inherit;">替换</font></font><code>/data</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为您希望 MinIO 存储数据的驱动器或目录的路径。</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>wget https://dl.min.io/server/minio/release/darwin-amd64/minio
 chmod +x minio
-./minio server /data
-```
-
-The MinIO deployment starts using default root credentials `minioadmin:minioadmin`. You can test the deployment using the MinIO Console, an embedded web-based object browser built into MinIO Server. Point a web browser running on the host machine to <http://127.0.0.1:9000> and log in with the root credentials. You can use the Browser to create buckets, upload objects, and browse the contents of the MinIO server.
-
-You can also connect using any S3-compatible tool, such as the MinIO Client `mc` commandline tool. See [Test using MinIO Client `mc`](#test-using-minio-client-mc) for more information on using the `mc` commandline tool. For application developers, see <https://min.io/docs/minio/linux/developers/minio-drivers.html> to view MinIO SDKs for supported languages.
-
-## GNU/Linux
-
-Use the following command to run a standalone MinIO server on Linux hosts running 64-bit Intel/AMD architectures. Replace ``/data`` with the path to the drive or directory in which you want MinIO to store data.
-
-```sh
-wget https://dl.min.io/server/minio/release/linux-amd64/minio
+./minio server /data</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="wget https://dl.min.io/server/minio/release/darwin-amd64/minio
 chmod +x minio
-./minio server /data
-```
-
-The following table lists supported architectures. Replace the `wget` URL with the architecture for your Linux host.
-
-| Architecture                   | URL                                                        |
-| --------                       | ------                                                     |
-| 64-bit Intel/AMD               | <https://dl.min.io/server/minio/release/linux-amd64/minio>   |
-| 64-bit ARM                     | <https://dl.min.io/server/minio/release/linux-arm64/minio>   |
-| 64-bit PowerPC LE (ppc64le)    | <https://dl.min.io/server/minio/release/linux-ppc64le/minio> |
-| IBM Z-Series (S390X)           | <https://dl.min.io/server/minio/release/linux-s390x/minio>   |
-
-The MinIO deployment starts using default root credentials `minioadmin:minioadmin`. You can test the deployment using the MinIO Console, an embedded web-based object browser built into MinIO Server. Point a web browser running on the host machine to <http://127.0.0.1:9000> and log in with the root credentials. You can use the Browser to create buckets, upload objects, and browse the contents of the MinIO server.
-
-You can also connect using any S3-compatible tool, such as the MinIO Client `mc` commandline tool. See [Test using MinIO Client `mc`](#test-using-minio-client-mc) for more information on using the `mc` commandline tool. For application developers, see <https://min.io/docs/minio/linux/developers/minio-drivers.html> to view MinIO SDKs for supported languages.
-
-> NOTE: Standalone MinIO servers are best suited for early development and evaluation. Certain features such as versioning, object locking, and bucket replication require distributed deploying MinIO with Erasure Coding. For extended development and production, deploy MinIO with Erasure Coding enabled - specifically, with a *minimum* of 4 drives per MinIO server. See [MinIO Erasure Code Overview](https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html#) for more complete documentation.
-
-## Microsoft Windows
-
-To run MinIO on 64-bit Windows hosts, download the MinIO executable from the following URL:
-
-```sh
-https://dl.min.io/server/minio/release/windows-amd64/minio.exe
-```
-
-Use the following command to run a standalone MinIO server on the Windows host. Replace ``D:\`` with the path to the drive or directory in which you want MinIO to store data. You must change the terminal or powershell directory to the location of the ``minio.exe`` executable, *or* add the path to that directory to the system ``$PATH``:
-
-```sh
-minio.exe server D:\
-```
-
-The MinIO deployment starts using default root credentials `minioadmin:minioadmin`. You can test the deployment using the MinIO Console, an embedded web-based object browser built into MinIO Server. Point a web browser running on the host machine to <http://127.0.0.1:9000> and log in with the root credentials. You can use the Browser to create buckets, upload objects, and browse the contents of the MinIO server.
-
-You can also connect using any S3-compatible tool, such as the MinIO Client `mc` commandline tool. See [Test using MinIO Client `mc`](#test-using-minio-client-mc) for more information on using the `mc` commandline tool. For application developers, see <https://min.io/docs/minio/linux/developers/minio-drivers.html> to view MinIO SDKs for supported languages.
-
-> NOTE: Standalone MinIO servers are best suited for early development and evaluation. Certain features such as versioning, object locking, and bucket replication require distributed deploying MinIO with Erasure Coding. For extended development and production, deploy MinIO with Erasure Coding enabled - specifically, with a *minimum* of 4 drives per MinIO server. See [MinIO Erasure Code Overview](https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html#) for more complete documentation.
-
-## Install from Source
-
-Use the following commands to compile and run a standalone MinIO server from source. Source installation is only intended for developers and advanced users. If you do not have a working Golang environment, please follow [How to install Golang](https://golang.org/doc/install). Minimum version required is [go1.19](https://golang.org/dl/#stable)
-
-```sh
-go install github.com/minio/minio@latest
-```
-
-The MinIO deployment starts using default root credentials `minioadmin:minioadmin`. You can test the deployment using the MinIO Console, an embedded web-based object browser built into MinIO Server. Point a web browser running on the host machine to <http://127.0.0.1:9000> and log in with the root credentials. You can use the Browser to create buckets, upload objects, and browse the contents of the MinIO server.
-
-You can also connect using any S3-compatible tool, such as the MinIO Client `mc` commandline tool. See [Test using MinIO Client `mc`](#test-using-minio-client-mc) for more information on using the `mc` commandline tool. For application developers, see <https://min.io/docs/minio/linux/developers/minio-drivers.html> to view MinIO SDKs for supported languages.
-
-> NOTE: Standalone MinIO servers are best suited for early development and evaluation. Certain features such as versioning, object locking, and bucket replication require distributed deploying MinIO with Erasure Coding. For extended development and production, deploy MinIO with Erasure Coding enabled - specifically, with a *minimum* of 4 drives per MinIO server. See [MinIO Erasure Code Overview](https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html) for more complete documentation.
-
-MinIO strongly recommends *against* using compiled-from-source MinIO servers for production environments.
-
-## Deployment Recommendations
-
-### Allow port access for Firewalls
-
-By default MinIO uses the port 9000 to listen for incoming connections. If your platform blocks the port by default, you may need to enable access to the port.
-
-### ufw
-
-For hosts with ufw enabled (Debian based distros), you can use `ufw` command to allow traffic to specific ports. Use below command to allow access to port 9000
-
-```sh
-ufw allow 9000
-```
-
-Below command enables all incoming traffic to ports ranging from 9000 to 9010.
-
-```sh
-ufw allow 9000:9010/tcp
-```
-
-### firewall-cmd
-
-For hosts with firewall-cmd enabled (CentOS), you can use `firewall-cmd` command to allow traffic to specific ports. Use below commands to allow access to port 9000
-
-```sh
-firewall-cmd --get-active-zones
-```
-
-This command gets the active zone(s). Now, apply port rules to the relevant zones returned above. For example if the zone is `public`, use
-
-```sh
-firewall-cmd --zone=public --add-port=9000/tcp --permanent
-```
-
-Note that `permanent` makes sure the rules are persistent across firewall start, restart or reload. Finally reload the firewall for changes to take effect.
-
-```sh
-firewall-cmd --reload
-```
-
-### iptables
-
-For hosts with iptables enabled (RHEL, CentOS, etc), you can use `iptables` command to enable all traffic coming to specific ports. Use below command to allow
-access to port 9000
-
-```sh
-iptables -A INPUT -p tcp --dport 9000 -j ACCEPT
-service iptables restart
-```
-
-Below command enables all incoming traffic to ports ranging from 9000 to 9010.
-
-```sh
-iptables -A INPUT -p tcp --dport 9000:9010 -j ACCEPT
-service iptables restart
-```
-
-## Test MinIO Connectivity
-
-### Test using MinIO Console
-
-MinIO Server comes with an embedded web based object browser. Point your web browser to <http://127.0.0.1:9000> to ensure your server has started successfully.
-
-> NOTE: MinIO runs console on random port by default if you wish choose a specific port use `--console-address` to pick a specific interface and port.
-
-### Things to consider
-
-MinIO redirects browser access requests to the configured server port (i.e. `127.0.0.1:9000`) to the configured Console port. MinIO uses the hostname or IP address specified in the request when building the redirect URL. The URL and port *must* be accessible by the client for the redirection to work.
-
-For deployments behind a load balancer, proxy, or ingress rule where the MinIO host IP address or port is not public, use the `MINIO_BROWSER_REDIRECT_URL` environment variable to specify the external hostname for the redirect. The LB/Proxy must have rules for directing traffic to the Console port specifically.
-
-For example, consider a MinIO deployment behind a proxy `https://minio.example.net`, `https://console.minio.example.net` with rules for forwarding traffic on port :9000 and :9001 to MinIO and the MinIO Console respectively on the internal network. Set `MINIO_BROWSER_REDIRECT_URL` to `https://console.minio.example.net` to ensure the browser receives a valid reachable URL.
-
-Similarly, if your TLS certificates do not have the IP SAN for the MinIO server host, the MinIO Console may fail to validate the connection to the server. Use the `MINIO_SERVER_URL` environment variable  and specify the proxy-accessible hostname of the MinIO server to allow the Console to use the MinIO server API using the TLS certificate.
-
-For example: `export MINIO_SERVER_URL="https://minio.example.net"`
-
-| Dashboard                                                                                   | Creating a bucket                                                                           |
-| -------------                                                                               | -------------                                                                               |
-| ![Dashboard](https://github.com/minio/minio/blob/master/docs/screenshots/pic1.png?raw=true) | ![Dashboard](https://github.com/minio/minio/blob/master/docs/screenshots/pic2.png?raw=true) |
-
-## Test using MinIO Client `mc`
-
-`mc` provides a modern alternative to UNIX commands like ls, cat, cp, mirror, diff etc. It supports filesystems and Amazon S3 compatible cloud storage services. Follow the MinIO Client [Quickstart Guide](https://min.io/docs/minio/linux/reference/minio-mc.html#quickstart) for further instructions.
-
-## Upgrading MinIO
-
-Upgrades require zero downtime in MinIO, all upgrades are non-disruptive, all transactions on MinIO are atomic. So upgrading all the servers simultaneously is the recommended way to upgrade MinIO.
-
-> NOTE: requires internet access to update directly from <https://dl.min.io>, optionally you can host any mirrors at <https://my-artifactory.example.com/minio/>
-
-- For deployments that installed the MinIO server binary by hand, use [`mc admin update`](https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-update.html)
-
-```sh
-mc admin update <minio alias, e.g., myminio>
-```
-
-- For deployments without external internet access (e.g. airgapped environments), download the binary from <https://dl.min.io> and replace the existing MinIO binary let's say for example `/opt/bin/minio`, apply executable permissions `chmod +x /opt/bin/minio` and proceed to perform `mc admin service restart alias/`.
-
-- For installations using Systemd MinIO service, upgrade via RPM/DEB packages **parallelly** on all servers or replace the binary lets say `/opt/bin/minio` on all nodes, apply executable permissions `chmod +x /opt/bin/minio` and process to perform `mc admin service restart alias/`.
-
-### Upgrade Checklist
-
-- Test all upgrades in a lower environment (DEV, QA, UAT) before applying to production. Performing blind upgrades in production environments carries significant risk.
-- Read the release notes for MinIO *before* performing any upgrade, there is no forced requirement to upgrade to latest releases upon every releases. Some releases may not be relevant to your setup, avoid upgrading production environments unnecessarily.
-- If you plan to use `mc admin update`, MinIO process must have write access to the parent directory where the binary is present on the host system.
-- `mc admin update` is not supported and should be avoided in kubernetes/container environments, please upgrade containers by upgrading relevant container images.
-- **We do not recommend upgrading one MinIO server at a time, the product is designed to support parallel upgrades please follow our recommended guidelines.**
-
-## Explore Further
-
-- [MinIO Erasure Code Overview](https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html)
-- [Use `mc` with MinIO Server](https://min.io/docs/minio/linux/reference/minio-mc.html)
-- [Use `minio-go` SDK with MinIO Server](https://min.io/docs/minio/linux/developers/go/minio-go.html)
-- [The MinIO documentation website](https://min.io/docs/minio/linux/index.html)
-
-## Contribute to MinIO Project
-
-Please follow MinIO [Contributor's Guide](https://github.com/minio/minio/blob/master/CONTRIBUTING.md)
-
-## License
-
-- MinIO source is licensed under the GNU AGPLv3 license that can be found in the [LICENSE](https://github.com/minio/minio/blob/master/LICENSE) file.
-- MinIO [Documentation](https://github.com/minio/minio/tree/master/docs) © 2021 by MinIO, Inc is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- [License Compliance](https://github.com/minio/minio/blob/master/COMPLIANCE.md)
+./minio server /data" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 部署使用默认 root 凭据启动</font></font><code>minioadmin:minioadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">您可以使用 MinIO Console 来测试部署，MinIO Console 是 MinIO Server 中内置的基于 Web 的嵌入式对象浏览器。</font><font style="vertical-align: inherit;">将主机上运行的 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用 root 凭据登录。</font><font style="vertical-align: inherit;">您可以使用浏览器创建存储桶、上传对象以及浏览 MinIO 服务器的内容。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以使用任何 S3 兼容工具进行连接，例如 MinIO Client</font></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令行工具。</font><font style="vertical-align: inherit;">有关使用命令行工具的更多信息，</font><font style="vertical-align: inherit;">请参阅</font></font><a href="#test-using-minio-client-mc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></a><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">对于应用程序开发人员，请参阅</font></font><a href="https://min.io/docs/minio/linux/developers/minio-drivers.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://min.io/docs/minio/linux/developers/minio-drivers.html</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看支持语言的 MinIO SDK。</font></font></p>
+<h2 tabindex="-1" dir="auto"><a id="user-content-gnulinux" class="anchor" aria-hidden="true" tabindex="-1" href="#gnulinux"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">GNU/Linux</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用以下命令在运行 64 位 Intel/AMD 架构的 Linux 主机上运行独立的 MinIO 服务器。</font><font style="vertical-align: inherit;">替换</font></font><code>/data</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为您希望 MinIO 存储数据的驱动器或目录的路径。</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+./minio server /data</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="wget https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+./minio server /data" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下表列出了支持的架构。</font><font style="vertical-align: inherit;">将</font></font><code>wget</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">URL 替换为您的 Linux 主机的体系结构。</font></font></p>
+<table>
+<thead>
+<tr>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">建筑学</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">网址</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">64 位英特尔/AMD</font></font></td>
+<td><a href="https://dl.min.io/server/minio/release/linux-amd64/minio" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://dl.min.io/server/minio/release/linux-amd64/minio</font></font></a></td>
+</tr>
+<tr>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">64位ARM</font></font></td>
+<td><a href="https://dl.min.io/server/minio/release/linux-arm64/minio" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://dl.min.io/server/minio/release/linux-arm64/minio</font></font></a></td>
+</tr>
+<tr>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">64 位 PowerPC LE (ppc64le)</font></font></td>
+<td><a href="https://dl.min.io/server/minio/release/linux-ppc64le/minio" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://dl.min.io/server/minio/release/linux-ppc64le/minio</font></font></a></td>
+</tr>
+<tr>
+<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">IBM Z 系列 (S390X)</font></font></td>
+<td><a href="https://dl.min.io/server/minio/release/linux-s390x/minio" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://dl.min.io/server/minio/release/linux-s390x/minio</font></font></a></td>
+</tr>
+</tbody>
+</table>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 部署使用默认 root 凭据启动</font></font><code>minioadmin:minioadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">您可以使用 MinIO Console 来测试部署，MinIO Console 是 MinIO Server 中内置的基于 Web 的嵌入式对象浏览器。</font><font style="vertical-align: inherit;">将主机上运行的 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用 root 凭据登录。</font><font style="vertical-align: inherit;">您可以使用浏览器创建存储桶、上传对象以及浏览 MinIO 服务器的内容。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以使用任何 S3 兼容工具进行连接，例如 MinIO Client</font></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令行工具。</font><font style="vertical-align: inherit;">有关使用命令行工具的更多信息，</font><font style="vertical-align: inherit;">请参阅</font></font><a href="#test-using-minio-client-mc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></a><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">对于应用程序开发人员，请参阅</font></font><a href="https://min.io/docs/minio/linux/developers/minio-drivers.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://min.io/docs/minio/linux/developers/minio-drivers.html</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看支持语言的 MinIO SDK。</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：独立的 MinIO 服务器最适合早期开发和评估。</font><font style="vertical-align: inherit;">某些功能（例如版本控制、对象锁定和存储桶复制）需要使用纠删码进行分布式部署 MinIO。</font><font style="vertical-align: inherit;">对于扩展开发和生产，部署启用纠删码的 MinIO - 具体来说，每个 MinIO 服务器</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">至少</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有 4 个驱动器。</font><font style="vertical-align: inherit;">有关更完整的文档，请参阅</font></font><a href="https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html#" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 纠删码概述</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+</blockquote>
+<h2 tabindex="-1" dir="auto"><a id="user-content-microsoft-windows" class="anchor" aria-hidden="true" tabindex="-1" href="#microsoft-windows"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">微软Windows</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">要在 64 位 Windows 主机上运行 MinIO，请从以下 URL 下载 MinIO 可执行文件：</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>https://dl.min.io/server/minio/release/windows-amd64/minio.exe</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="https://dl.min.io/server/minio/release/windows-amd64/minio.exe" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用以下命令在 Windows 主机上运行独立的 MinIO 服务器。</font><font style="vertical-align: inherit;">替换</font></font><code>D:\</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为您希望 MinIO 存储数据的驱动器或目录的路径。</font><font style="vertical-align: inherit;">您必须将终端或 powershell 目录更改为可执行文件的位置</font></font><code>minio.exe</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将该目录的路径添加到系统中</font></font><code>$PATH</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">：</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>minio.exe server D:\</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="minio.exe server D:\" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 部署使用默认 root 凭据启动</font></font><code>minioadmin:minioadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">您可以使用 MinIO Console 来测试部署，MinIO Console 是 MinIO Server 中内置的基于 Web 的嵌入式对象浏览器。</font><font style="vertical-align: inherit;">将主机上运行的 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用 root 凭据登录。</font><font style="vertical-align: inherit;">您可以使用浏览器创建存储桶、上传对象以及浏览 MinIO 服务器的内容。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以使用任何 S3 兼容工具进行连接，例如 MinIO Client</font></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令行工具。</font><font style="vertical-align: inherit;">有关使用命令行工具的更多信息，</font><font style="vertical-align: inherit;">请参阅</font></font><a href="#test-using-minio-client-mc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></a><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">对于应用程序开发人员，请参阅</font></font><a href="https://min.io/docs/minio/linux/developers/minio-drivers.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://min.io/docs/minio/linux/developers/minio-drivers.html</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看支持语言的 MinIO SDK。</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：独立的 MinIO 服务器最适合早期开发和评估。</font><font style="vertical-align: inherit;">某些功能（例如版本控制、对象锁定和存储桶复制）需要使用纠删码进行分布式部署 MinIO。</font><font style="vertical-align: inherit;">对于扩展开发和生产，部署启用纠删码的 MinIO - 具体来说，每个 MinIO 服务器</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">至少</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有 4 个驱动器。</font><font style="vertical-align: inherit;">有关更完整的文档，请参阅</font></font><a href="https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html#" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 纠删码概述</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+</blockquote>
+<h2 tabindex="-1" dir="auto"><a id="user-content-install-from-source" class="anchor" aria-hidden="true" tabindex="-1" href="#install-from-source"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">从源安装</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用以下命令从源代码编译并运行独立的 MinIO 服务器。</font><font style="vertical-align: inherit;">源安装仅适用于开发人员和高级用户。</font><font style="vertical-align: inherit;">如果您没有可用的 Golang 环境，请按照</font></font><a href="https://golang.org/doc/install" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如何安装 Golang</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">进行操作。</font><font style="vertical-align: inherit;">所需的最低版本是</font></font><a href="https://golang.org/dl/#stable" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">go1.19</font></font></a></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>go install github.com/minio/minio@latest</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="go install github.com/minio/minio@latest" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 部署使用默认 root 凭据启动</font></font><code>minioadmin:minioadmin</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">您可以使用 MinIO Console 来测试部署，MinIO Console 是 MinIO Server 中内置的基于 Web 的嵌入式对象浏览器。</font><font style="vertical-align: inherit;">将主机上运行的 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用 root 凭据登录。</font><font style="vertical-align: inherit;">您可以使用浏览器创建存储桶、上传对象以及浏览 MinIO 服务器的内容。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">您还可以使用任何 S3 兼容工具进行连接，例如 MinIO Client</font></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令行工具。</font><font style="vertical-align: inherit;">有关使用命令行工具的更多信息，</font><font style="vertical-align: inherit;">请参阅</font></font><a href="#test-using-minio-client-mc"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></a><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font><font style="vertical-align: inherit;">对于应用程序开发人员，请参阅</font></font><a href="https://min.io/docs/minio/linux/developers/minio-drivers.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://min.io/docs/minio/linux/developers/minio-drivers.html</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">查看支持语言的 MinIO SDK。</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：独立的 MinIO 服务器最适合早期开发和评估。</font><font style="vertical-align: inherit;">某些功能（例如版本控制、对象锁定和存储桶复制）需要使用纠删码进行分布式部署 MinIO。</font><font style="vertical-align: inherit;">对于扩展开发和生产，部署启用纠删码的 MinIO - 具体来说，每个 MinIO 服务器</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">至少</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">有 4 个驱动器。</font><font style="vertical-align: inherit;">有关更完整的文档，请参阅</font></font><a href="https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 纠删码概述</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+</blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 强烈建议</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">不要</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在生产环境中使用从源代码编译的 MinIO 服务器。</font></font></p>
+<h2 tabindex="-1" dir="auto"><a id="user-content-deployment-recommendations" class="anchor" aria-hidden="true" tabindex="-1" href="#deployment-recommendations"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">部署建议</font></font></h2>
+<h3 tabindex="-1" dir="auto"><a id="user-content-allow-port-access-for-firewalls" class="anchor" aria-hidden="true" tabindex="-1" href="#allow-port-access-for-firewalls"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">允许防火墙端口访问</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">默认情况下，MinIO 使用端口 9000 侦听传入连接。</font><font style="vertical-align: inherit;">如果您的平台默认阻止该端口，您可能需要启用对该端口的访问。</font></font></p>
+<h3 tabindex="-1" dir="auto"><a id="user-content-ufw" class="anchor" aria-hidden="true" tabindex="-1" href="#ufw"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">乌夫沃</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于启用了 ufw 的主机（基于 Debian 的发行版），您可以使用</font></font><code>ufw</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令允许流量流向特定端口。</font><font style="vertical-align: inherit;">使用以下命令允许访问端口 9000</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>ufw allow 9000</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="ufw allow 9000" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以下命令启用端口范围从 9000 到 9010 的所有传入流量。</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>ufw allow 9000:9010/tcp</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="ufw allow 9000:9010/tcp" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<h3 tabindex="-1" dir="auto"><a id="user-content-firewall-cmd" class="anchor" aria-hidden="true" tabindex="-1" href="#firewall-cmd"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">防火墙命令</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于启用了firewall-cmd的主机（CentOS），您可以使用</font></font><code>firewall-cmd</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令允许特定端口的流量。</font><font style="vertical-align: inherit;">使用以下命令允许访问端口 9000</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>firewall-cmd --get-active-zones</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="firewall-cmd --get-active-zones" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">此命令获取活动区域。</font><font style="vertical-align: inherit;">现在，将端口规则应用于上面返回的相关区域。</font><font style="vertical-align: inherit;">例如，如果区域是</font></font><code>public</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，则使用</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>firewall-cmd --zone=public --add-port=9000/tcp --permanent</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="firewall-cmd --zone=public --add-port=9000/tcp --permanent" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">请注意，</font></font><code>permanent</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">确保规则在防火墙启动、重新启动或重新加载时保持不变。</font><font style="vertical-align: inherit;">最后重新加载防火墙以使更改生效。</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>firewall-cmd --reload</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="firewall-cmd --reload" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<h3 tabindex="-1" dir="auto"><a id="user-content-iptables" class="anchor" aria-hidden="true" tabindex="-1" href="#iptables"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">iptables</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于启用了 iptables 的主机（RHEL、CentOS 等），您可以使用</font></font><code>iptables</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">命令启用来自特定端口的所有流量。</font><font style="vertical-align: inherit;">使用以下命令允许访问端口 9000</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>iptables -A INPUT -p tcp --dport 9000 -j ACCEPT
+service iptables restart</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="iptables -A INPUT -p tcp --dport 9000 -j ACCEPT
+service iptables restart" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以下命令启用端口范围从 9000 到 9010 的所有传入流量。</font></font></p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>iptables -A INPUT -p tcp --dport 9000:9010 -j ACCEPT
+service iptables restart</pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="iptables -A INPUT -p tcp --dport 9000:9010 -j ACCEPT
+service iptables restart" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<h2 tabindex="-1" dir="auto"><a id="user-content-test-minio-connectivity" class="anchor" aria-hidden="true" tabindex="-1" href="#test-minio-connectivity"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">测试 MinIO 连接性</font></font></h2>
+<h3 tabindex="-1" dir="auto"><a id="user-content-test-using-minio-console" class="anchor" aria-hidden="true" tabindex="-1" href="#test-using-minio-console"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 控制台进行测试</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO Server 附带一个嵌入式基于 Web 的对象浏览器。</font><font style="vertical-align: inherit;">将 Web 浏览器指向</font></font><a href="http://127.0.0.1:9000" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">http://127.0.0.1:9000</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以确保服务器已成功启动。</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：MinIO 默认在随机端口上运行控制台，如果您希望选择特定端口，请使用</font></font><code>--console-address</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">选择特定接口和端口。</font></font></p>
+</blockquote>
+<h3 tabindex="-1" dir="auto"><a id="user-content-things-to-consider" class="anchor" aria-hidden="true" tabindex="-1" href="#things-to-consider"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">需要考虑的事项</font></font></h3>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 将浏览器访问请求重定向到配置的服务器端口（即</font></font><code>127.0.0.1:9000</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">）到配置的控制台端口。</font><font style="vertical-align: inherit;">MinIO 在构建重定向 URL 时使用请求中指定的主机名或 IP 地址。</font></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">客户端必须</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">可以访问URL 和端口</font><font style="vertical-align: inherit;">才能使重定向发挥作用。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于负载均衡器、代理或入口规则后面的部署（其中 MinIO 主机 IP 地址或端口不是公共的），请使用</font></font><code>MINIO_BROWSER_REDIRECT_URL</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">环境变量指定重定向的外部主机名。</font><font style="vertical-align: inherit;">LB/Proxy 必须具有专门将流量定向到控制台端口的规则。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">例如，考虑在代理后面部署 MinIO </font></font><code>https://minio.example.net</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font><code>https://console.minio.example.net</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并使用将端口 :9000 和 :9001 上的流量分别转发到内部网络上的 MinIO 和 MinIO 控制台的规则。</font><font style="vertical-align: inherit;">设置</font></font><code>MINIO_BROWSER_REDIRECT_URL</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为</font></font><code>https://console.minio.example.net</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">以确保浏览器收到有效的可访问 URL。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">同样，如果您的 TLS 证书没有 MinIO 服务器主机的 IP SAN，MinIO 控制台可能无法验证与服务器的连接。</font><font style="vertical-align: inherit;">使用</font></font><code>MINIO_SERVER_URL</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">环境变量并指定 MinIO 服务器的代理可访问主机名，以允许控制台通过 TLS 证书使用 MinIO 服务器 API。</font></font></p>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">例如：</font></font><code>export MINIO_SERVER_URL="https://minio.example.net"</code></p>
+<table>
+<thead>
+<tr>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">仪表板</font></font></th>
+<th><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">创建存储桶</font></font></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/minio/minio/blob/master/docs/screenshots/pic1.png?raw=true"><img src="https://github.com/minio/minio/raw/master/docs/screenshots/pic1.png?raw=true" alt="仪表板" style="max-width: 100%;"></a></td>
+<td><a target="_blank" rel="noopener noreferrer" href="https://github.com/minio/minio/blob/master/docs/screenshots/pic2.png?raw=true"><img src="https://github.com/minio/minio/raw/master/docs/screenshots/pic2.png?raw=true" alt="仪表板" style="max-width: 100%;"></a></td>
+</tr>
+</tbody>
+</table>
+<h2 tabindex="-1" dir="auto"><a id="user-content-test-using-minio-client-mc" class="anchor" aria-hidden="true" tabindex="-1" href="#test-using-minio-client-mc"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">使用 MinIO 客户端进行测试</font></font><code>mc</code></h2>
+<p dir="auto"><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">提供了 UNIX 命令（如 ls、cat、cp、mirror、diff 等）的现代替代方案。它支持文件系统和 Amazon S3 兼容的云存储服务。</font><font style="vertical-align: inherit;">请按照 MinIO 客户端</font></font><a href="https://min.io/docs/minio/linux/reference/minio-mc.html#quickstart" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">快速入门指南</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">获取更多说明。</font></font></p>
+<h2 tabindex="-1" dir="auto"><a id="user-content-upgrading-minio" class="anchor" aria-hidden="true" tabindex="-1" href="#upgrading-minio"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">升级MinIO</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">升级要求 MinIO 中的零停机时间，所有升级都是无中断的，MinIO 上的所有事务都是原子的。</font><font style="vertical-align: inherit;">因此，同时升级所有服务器是升级 MinIO 的推荐方法。</font></font></p>
+<blockquote>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">注意：需要访问互联网才能直接从</font></font><a href="https://dl.min.io" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://dl.min.io</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">进行更新，您也可以选择在</font></font><a href="https://my-artifactory.example.com/minio/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://my-artifactory.example.com/minio/托管任何镜像</font></font></a></p>
+</blockquote>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于手动安装 MinIO 服务器二进制文件的部署，请使用</font></font><a href="https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-update.html" rel="nofollow"><code>mc admin update</code></a></li>
+</ul>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" dir="auto"><pre>mc admin update <span class="pl-k">&lt;</span>minio alias, e.g., myminio<span class="pl-k">&gt;</span></pre><div class="zeroclipboard-container">
+    <clipboard-copy aria-label="Copy" class="ClipboardButton btn btn-invisible js-clipboard-copy m-2 p-0 tooltipped-no-delay d-flex flex-justify-center flex-items-center" data-copy-feedback="Copied!" data-tooltip-direction="w" value="mc admin update <minio alias, e.g., myminio>" tabindex="0" role="button">
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-copy js-clipboard-copy-icon">
+    <path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"></path><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"></path>
+</svg>
+      <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-check js-clipboard-check-icon color-fg-success d-none">
+    <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"></path>
+</svg>
+    </clipboard-copy>
+  </div></div>
+<ul dir="auto">
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"></font><a href="https://dl.min.io" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于没有外部互联网访问的部署（例如气隙环境），请从https://dl.min.io</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">下载二进制文件</font><font style="vertical-align: inherit;">并替换现有的 MinIO 二进制文件，例如</font></font><code>/opt/bin/minio</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，应用可执行权限</font></font><code>chmod +x /opt/bin/minio</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">并继续执行</font></font><code>mc admin service restart alias/</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">。</font></font></p>
+</li>
+<li>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">对于使用 Systemd MinIO 服务的安装，请在所有服务器上通过 RPM/DEB 包并行升级</font></font><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，</font></font></strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">或者在所有节点上替换二进制文件</font></font><code>/opt/bin/minio</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，应用可执行权限</font></font><code>chmod +x /opt/bin/minio</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">和进程来执行</font></font><code>mc admin service restart alias/</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">.</font></font></p>
+</li>
+</ul>
+<h3 tabindex="-1" dir="auto"><a id="user-content-upgrade-checklist" class="anchor" aria-hidden="true" tabindex="-1" href="#upgrade-checklist"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">升级清单</font></font></h3>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在应用于生产之前，请在较低环境（DEV、QA、UAT）中测试所有升级。</font><font style="vertical-align: inherit;">在生产环境中执行盲目升级会带来巨大风险。</font></font></li>
+<li><font style="vertical-align: inherit;"></font><em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在执行任何升级之前</font></font></em><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，请阅读 MinIO 的发行说明</font><font style="vertical-align: inherit;">，没有强制要求在每个版本上升级到最新版本。</font><font style="vertical-align: inherit;">某些版本可能与您的设置无关，请避免不必要地升级生产环境。</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">如果您计划使用</font></font><code>mc admin update</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">，MinIO 进程必须对主机系统上二进制文件所在的父目录具有写访问权限。</font></font></li>
+<li><code>mc admin update</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">在 kubernetes/container 环境中不支持且应避免使用，请通过升级相关容器镜像来升级容器。</font></font></li>
+<li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">我们不建议一次升级一台 MinIO 服务器，该产品旨在支持并行升级，请遵循我们建议的指南。</font></font></strong></li>
+</ul>
+<h2 tabindex="-1" dir="auto"><a id="user-content-explore-further" class="anchor" aria-hidden="true" tabindex="-1" href="#explore-further"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">进一步探索</font></font></h2>
+<ul dir="auto">
+<li><a href="https://min.io/docs/minio/linux/operations/concepts/erasure-coding.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 纠删码概述</font></font></a></li>
+<li><a href="https://min.io/docs/minio/linux/reference/minio-mc.html" rel="nofollow"><font style="vertical-align: inherit;"></font><code>mc</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">与 MinIO 服务器一起</font><font style="vertical-align: inherit;">使用</font></font></a></li>
+<li><a href="https://min.io/docs/minio/linux/developers/go/minio-go.html" rel="nofollow"><font style="vertical-align: inherit;"></font><code>minio-go</code><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">将SDK 与 MinIO 服务器</font><font style="vertical-align: inherit;">结合使用</font></font></a></li>
+<li><a href="https://min.io/docs/minio/linux/index.html" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 文档网站</font></font></a></li>
+</ul>
+<h2 tabindex="-1" dir="auto"><a id="user-content-contribute-to-minio-project" class="anchor" aria-hidden="true" tabindex="-1" href="#contribute-to-minio-project"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">为 MinIO 项目做出贡献</font></font></h2>
+<p dir="auto"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">请遵循 MinIO</font></font><a href="https://github.com/minio/minio/blob/master/CONTRIBUTING.md"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">贡献者指南</font></font></a></p>
+<h2 tabindex="-1" dir="auto"><a id="user-content-license" class="anchor" aria-hidden="true" tabindex="-1" href="#license"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">执照</font></font></h2>
+<ul dir="auto">
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO 源代码已获得</font></font><a href="https://github.com/minio/minio/blob/master/LICENSE"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">GNU AGPLv3</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">许可。</font></font></li>
+<li><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MinIO</font></font><a href="https://github.com/minio/minio/tree/master/docs"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">文档</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">已获得</font></font><a href="https://creativecommons.org/licenses/by/4.0/" rel="nofollow"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">CC BY 4.0</font></font></a><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">许可。</font></font></li>
+<li><a href="https://github.com/minio/minio/blob/master/COMPLIANCE.md"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">许可合规性</font></font></a></li>
+</ul>
+</article></div>
